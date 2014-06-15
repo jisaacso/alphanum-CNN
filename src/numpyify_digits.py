@@ -22,8 +22,11 @@ if __name__ == '__main__':
 
     idx = 0
     for alphnum in classes:
+        print 'classname is %s' %alphnum
+
         if alphnum == '.gitignore':
             continue
+
         for sample in os.listdir(prefix + alphnum):
             labels[idx] = alphnum # ord() names
 
@@ -39,31 +42,21 @@ if __name__ == '__main__':
             features[idx, :] = im
 
             idx += 1
-            if idx % 1000 == 0:
-                print idx
-
-    sss = StratifiedShuffleSplit(labels, n_iter=1, test_size=.2)
-    sss_v = StratifiedShuffleSplit(labels, n_iter=1, test_size=.5)
+            #if idx % 1000 == 0:
+            #    print idx
 
 
+    r = np.random.rand(len(labels))
+    ind1 = np.where(r <= .1)[0]
+    ind2 = np.where( (r > .1) & (r <= .2))[0]
+    ind3 = np.where(r > .2)[0]
 
-    # generate x/y train, test and validate
-    for train_index, rest_index in sss:
-        x_train = features[train_index, :]
-        x_rest = features[rest_index, :]
-        y_train = labels[train_index]
-        y_rest = labels[rest_index]
-
-    for test_index, validate_index in sss_v:
-        x_test = features[test_index, :]
-        x_validate = features[validate_index, :]
-        y_test = labels[test_index]
-        y_validate = labels[validate_index]
-
-        #x_train, x_rest, y_train, y_rest = train_test_split(
-        #    features,labels, test_size=.2)
-        #x_test, x_validate, y_test, y_validate = train_test_split(
-        #    x_rest,y_rest, test_size=.5)
+    x_train = features[ind3, :]
+    y_train = labels[ind3]
+    x_test = features[ind2, :]
+    y_test = labels[ind2]
+    x_validate = features[ind1, :]
+    y_validate = labels[ind1]
 
     print [chr(int(i)) for i in np.unique(y_train)]
     print [chr(int(i)) for i in np.unique(y_validate)]
